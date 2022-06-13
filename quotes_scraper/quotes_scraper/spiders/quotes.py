@@ -11,10 +11,16 @@ class QuotesSpider(scrapy.Spider):
         'http://quotes.toscrape.com/page/1/'
     ]
 
-    # Definimos la estructura del archivo
+    # Definimos la configuración
     custom_settings = {
       'FEED_URI': 'quoes.json',
-      'FEED_FORMAT': 'json'
+      'FEED_FORMAT': 'json',
+      'CONCURRENT_REQUESTS': 24, # Max
+      'MEMUSAGE_LIMIT_MB': 2048, # Memoria max
+      'MEMUSAGE_NOTIFY_MAIK': ['m@pandalabs.mx'],
+      'ROBOTSTXT_OBE': True, # ;)
+      'USER_AGENT': 'PepitoMartinez',
+      'FEED_EXPORT_ENCODING': 'utf-8'
     }
 
     # Función para attach de quotes
