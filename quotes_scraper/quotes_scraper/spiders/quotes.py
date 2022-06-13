@@ -1,6 +1,3 @@
-from email.quoprimime import quote
-from gc import callbacks
-import json
 import scrapy
 
 # Titulo = //h1/a/text()
@@ -14,11 +11,13 @@ class QuotesSpider(scrapy.Spider):
         'http://quotes.toscrape.com/page/1/'
     ]
 
+    # Definimos la estructura del archivo
     custom_settings = {
       'FEED_URI': 'quoes.json',
       'FEED_FORMAT': 'json'
     }
 
+    # Función para attach de quotes
     def parse_only_quotes(self, response, **kwargs):
       if kwargs:
         quotes = kwargs['quotes']
@@ -32,12 +31,13 @@ class QuotesSpider(scrapy.Spider):
           'quotes': quotes
         }
 
+    # Función para extraer title & top_tags
     def parse(self, response):
         title = response.xpath('//h1/a/text()').get()
         quotes = response.xpath('//span[@class="text" and @itemprop="text"]/text()').getall()
         top_tags = response.xpath('//div[contains(@class, "tags-box")]//span[@class="tag-item"]/a/text()').getall()
         
-
+        # Pasando argumentos a nuestro spider
         top = getattr(self, 'top', None)
         if top:
           top = int(top)
@@ -48,6 +48,7 @@ class QuotesSpider(scrapy.Spider):
           'top_tags': top_tags
         }
 
+        # pasamos a parse_only_quotes lo que ya traemos
         next_page_button_link = response.xpath('//ul[@class="pager"]//li[@class="next"]/a/@href').get()
         if next_page_button_link:
           yield response.follow(next_page_button_link, callback=self.parse_only_quotes, cb_kwargs={'quotes':quotes})
